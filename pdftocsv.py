@@ -33,3 +33,25 @@ def extract_text_from_pdf(pdf_path):
 
     if text:
         return text 
+
+#Saving to csv
+import csv
+import os
+
+def export_as_csv(pdf_path, csv_path):
+    
+    with open(csv_path, 'a',encoding= "utf-8",newline="\n") as csv_file:
+        writer = csv.writer(csv_file)
+        text = extract_text_from_pdf(pdf_path)
+        
+        writer.writerow(["Profile1",text])
+        
+
+            
+if __name__ == '__main__':
+    
+        
+	
+	pdf_path = "Profile1.pdf"
+	csv_path = 'Profile1.csv'
+	export_as_csv(pdf_path, csv_path)
