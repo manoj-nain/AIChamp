@@ -39,15 +39,16 @@ import csv
 import os
 
 def export_as_csv(pdf_path, csv_path):
-    
+
     with open(csv_path, 'a',encoding= "utf-8",newline="\n") as csv_file:
         writer = csv.writer(csv_file)
         text = extract_text_from_pdf(pdf_path)
         text = text[:]
         words = text.split()
-        writer.writerow([profile," ".join(words)])
+        writer.writerow([i," ".join(words)])
         
 
+            
 if __name__ == '__main__':
     
     for i in range(1,51):    
