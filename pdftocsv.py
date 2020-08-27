@@ -39,19 +39,23 @@ import csv
 import os
 
 def export_as_csv(pdf_path, csv_path):
-    
+    #filename = os.path.splitext(os.path.basename(pdf_path))[0]
+    #counter = 1
     with open(csv_path, 'a',encoding= "utf-8",newline="\n") as csv_file:
         writer = csv.writer(csv_file)
         text = extract_text_from_pdf(pdf_path)
         
-        writer.writerow(["Profile1",text])
+        writer.writerow([profile,text])
         
-
+#         for page in extract_text_by_page(pdf_path):
+#             text = page[:]
+#             words = text.split("\n")
+#             writer.writerow(words)
             
 if __name__ == '__main__':
     
-        
-	
-	pdf_path = "Profile1.pdf"
-	csv_path = 'Profile1.csv'
-	export_as_csv(pdf_path, csv_path)
+    for i in range(1,51):    
+        profile = "Profile" + str(i)
+        pdf_path = profile+".pdf"
+        csv_path = 'Profile1.csv'
+        export_as_csv(pdf_path, csv_path)
