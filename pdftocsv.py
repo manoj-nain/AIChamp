@@ -1,4 +1,5 @@
-#Ceating function to extract data from PDF using Pdfminer 
+#Ceating function to extract data from PDF using Pdfminer
+#Updated to detect spaces 
 
 import io
 
