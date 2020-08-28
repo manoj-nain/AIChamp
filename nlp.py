@@ -76,3 +76,65 @@ plt.imshow(wordcloud)
 plt.axis('off')
 plt.show()
 fig.savefig("word1.png", dpi=900)
+
+#Using TF IDF to get Keywords
+from sklearn.feature_extraction.text import CountVectorizer
+
+#create a vocabulary of words, 
+#ignore words that appear in 85% of documents, 
+#eliminate stop words
+cv=CountVectorizer(max_df=0.85,stop_words=stop_words)
+word_count_vector=cv.fit_transform(freq_words)
+
+from sklearn.feature_extraction.text import TfidfTransformer
+
+tfidf_transformer=TfidfTransformer(smooth_idf=True,use_idf=True)
+tfidf_transformer.fit(word_count_vector)
+
+tfidf_transformer.idf_
+
+def sort_coo(coo_matrix):
+    tuples = zip(coo_matrix.col, coo_matrix.data)
+    return sorted(tuples, key=lambda x: (x[1], x[0]), reverse=True)
+
+def extract_topn_from_vector(feature_names, sorted_items, topn=10):
+    """get the feature names and tf-idf score of top n items"""
+    
+    #use only topn items from vector
+    sorted_items = sorted_items[:topn]
+
+    score_vals = []
+    feature_vals = []
+
+    for idx, score in sorted_items:
+        fname = feature_names[idx]
+        
+        #keep track of feature name and its corresponding score
+        score_vals.append(round(score, 3))
+        feature_vals.append(feature_names[idx])
+
+    #create a tuples of feature,score
+    #results = zip(feature_vals,score_vals)
+    results= {}
+    for idx in range(len(feature_vals)):
+        results[feature_vals[idx]]=score_vals[idx]
+    
+    return results
+
+feature_names=cv.get_feature_names()
+
+# get the document that we want to extract keywords from
+doc=freq_words
+
+#generate tf-idf for the given document
+tf_idf_vector=tfidf_transformer.transform(cv.transform(freq_words))
+
+#sort the tf-idf vectors by descending order of scores
+sorted_items=sort_coo(tf_idf_vector.tocoo())
+
+#extract only the top n; n here is 500
+keywords=extract_topn_from_vector(feature_names,sorted_items,500)
+
+
+for k in keywords:
+    print(k,keywords[k])
