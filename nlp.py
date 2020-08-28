@@ -38,7 +38,10 @@ sentences = [y for x in sentences for y in x]
 nltk.download('stopwords')
 
 #remove stopwords from sentences
-stop_words = stopwords.words('english')
+stop_words = set(stopwords.words("english"))
+##Creating a list of custom stopwords
+new_words = ["linkedin", "com", "www", "top", "page", "co", "c", "om","using","various","year","month","months","years"]
+stop_words = stop_words.union(new_words)
 
 # function to remove stopwords
 def remove_stopwords(sen):
