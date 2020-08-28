@@ -6,7 +6,7 @@ import pandas as pd
 profile_df = pd.read_csv('Profile1.csv',names=['Index','Profile'])
 profile_df.head()
 
-#creatinf function to clean text data to remove symbols
+##cleaning text data to remove symbols, numbers, parantheses
 import re
 def clean_data(text):
     text = re.sub('RT@[\w]*:',"",text)
@@ -15,6 +15,7 @@ def clean_data(text):
     text = re.sub('\n',"",text)
     text = re.sub("\."," ",text) 
     text = re.sub("/"," ",text)
+    text = re.sub("[^a-zA-Z]", " ",text) 
     return text
 
 #using clean_data function
