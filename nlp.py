@@ -21,3 +21,27 @@ def clean_data(text):
 
 #using clean_data function
 profile_df['Profile'] = profile_df['Profile'].apply(lambda x: clean_data(x))
+
+#removing stopwords
+
+import nltk
+
+from nltk.corpus import stopwords
+from nltk.tokenize import sent_tokenize
+#break the text into individual sentences
+sentences = []
+for s in profile_df['Profile']:
+    sentences.append(sent_tokenize(s))
+
+sentences = [y for x in sentences for y in x]
+
+nltk.download('stopwords')
+
+#remove stopwords from sentences
+stop_words = stopwords.words('english')
+
+# function to remove stopwords
+def remove_stopwords(sen):
+    sen_new = " ".join([i for i in sen if i not in stop_words])
+    return sen_new
+clean_sentences = [remove_stopwords(r.split()) for r in sentences]
