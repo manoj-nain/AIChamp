@@ -54,3 +54,25 @@ freq_words =" ".join(clean_sentences)
 freq_words = freq_words.split()
 freq = nltk.FreqDist(freq_words)
 print(freq.most_common(10))
+
+#Create word cloud
+
+from os import path
+from PIL import Image
+from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
+import matplotlib.pyplot as plt
+%matplotlib inline
+wordcloud = WordCloud(
+                          background_color='white',
+                          stopwords=stop_words,
+                          max_words=100,
+                          max_font_size=50, 
+                          random_state=42
+                         ).generate(str(freq_words))
+print(wordcloud)
+fig = plt.figure(1)
+plt.figure(figsize=(20,10))
+plt.imshow(wordcloud)
+plt.axis('off')
+plt.show()
+fig.savefig("word1.png", dpi=900)
