@@ -45,3 +45,9 @@ def remove_stopwords(sen):
     sen_new = " ".join([i for i in sen if i not in stop_words])
     return sen_new
 clean_sentences = [remove_stopwords(r.split()) for r in sentences]
+
+#Find frequent words
+freq_words =" ".join(clean_sentences)
+freq_words = freq_words.split()
+freq = nltk.FreqDist(freq_words)
+print(freq.most_common(10))
