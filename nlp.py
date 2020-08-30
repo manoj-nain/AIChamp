@@ -49,13 +49,37 @@ def remove_stopwords(sen):
     return sen_new
 clean_sentences = [remove_stopwords(r.split()) for r in sentences]
 
-#Find frequent words
-freq_words =" ".join(clean_sentences)
-freq_words = freq_words.split()
-freq = nltk.FreqDist(freq_words)
-print(freq.most_common(10))
+#Find frequent words and save it to csv
+frequent=[]
+for word in clean_sentences:
+    word = word.split()
+    freq = nltk.FreqDist(word)
+    frequent.append(freq.most_common(5))
+freq_df = pd.DataFrame({"Frequent words":frequent})
+freq_df.to_csv('freq_words_file.csv')
+
+#Find Keywords and save it to csv
+def find_essential_words(text_data,n = 10):
+    
+    list_imp_words = []
+    vectorizer = TfidfVectorizer()
+    X = vectorizer.fit_transform(text_data)
+    for line in text_data:
+        response = vectorizer.transform([line])
+        feature_array = np.array(vectorizer.get_feature_names())
+        tfidf_sorting = np.argsort(response.toarray()).flatten()[::-1]
+        top_k = feature_array[tfidf_sorting][:n]
+        list_imp_words.append(', '.join(top_k))
+    return list_imp_words
+essential_words = find_essential_words(clean_sentences)
+essential_words_data = pd.DataFrame(imp_words,columns = ['Important Words'])
+essential_words_data.to_csv('imp_words_file.csv')
+
 
 #Create word cloud
+
+freq_words=" ".join(clean_sentences)
+freq_words=freq_words.split()
 
 from os import path
 from PIL import Image
@@ -77,64 +101,3 @@ plt.axis('off')
 plt.show()
 fig.savefig("word1.png", dpi=900)
 
-#Using TF IDF to get Keywords
-from sklearn.feature_extraction.text import CountVectorizer
-
-#create a vocabulary of words, 
-#ignore words that appear in 85% of documents, 
-#eliminate stop words
-cv=CountVectorizer(max_df=0.85,stop_words=stop_words)
-word_count_vector=cv.fit_transform(freq_words)
-
-from sklearn.feature_extraction.text import TfidfTransformer
-
-tfidf_transformer=TfidfTransformer(smooth_idf=True,use_idf=True)
-tfidf_transformer.fit(word_count_vector)
-
-tfidf_transformer.idf_
-
-def sort_coo(coo_matrix):
-    tuples = zip(coo_matrix.col, coo_matrix.data)
-    return sorted(tuples, key=lambda x: (x[1], x[0]), reverse=True)
-
-def extract_topn_from_vector(feature_names, sorted_items, topn=10):
-    """get the feature names and tf-idf score of top n items"""
-    
-    #use only topn items from vector
-    sorted_items = sorted_items[:topn]
-
-    score_vals = []
-    feature_vals = []
-
-    for idx, score in sorted_items:
-        fname = feature_names[idx]
-        
-        #keep track of feature name and its corresponding score
-        score_vals.append(round(score, 3))
-        feature_vals.append(feature_names[idx])
-
-    #create a tuples of feature,score
-    #results = zip(feature_vals,score_vals)
-    results= {}
-    for idx in range(len(feature_vals)):
-        results[feature_vals[idx]]=score_vals[idx]
-    
-    return results
-
-feature_names=cv.get_feature_names()
-
-# get the document that we want to extract keywords from
-doc=freq_words
-
-#generate tf-idf for the given document
-tf_idf_vector=tfidf_transformer.transform(cv.transform(freq_words))
-
-#sort the tf-idf vectors by descending order of scores
-sorted_items=sort_coo(tf_idf_vector.tocoo())
-
-#extract only the top n; n here is 500
-keywords=extract_topn_from_vector(feature_names,sorted_items,500)
-
-
-for k in keywords:
-    print(k,keywords[k])
